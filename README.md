@@ -1,7 +1,7 @@
 # pcp
 pcpはフィイルやディレクトリを指定して、ファイル名とファイル内容をコードブロックで出力するツールです。
 複数のファイルをLLMに内容をコピペが少しだけ楽になります。
-pcpの出力をそのままpbpasteに流してしまうのがおすすめです。
+pcpの出力をそのまま`pbpaste`などのクリップボードツールに流してしまうのがおすすめです。
 
 例えば `a.txt`というファイルを指定すると以下のように出力します。
 ````
@@ -38,3 +38,11 @@ This is contents of src/lib.rs
 This is contents of src/main.rs
 ```
 ````
+
+## ビルドとインストール
+リポジトリをcloneしたら以下のコマンドでビルドして`PATH`の通っているディレクトリに配置してください。
+```
+$ cargo build --release
+$ mv target/release/pcp $HOME/.local/bin
+```
+`$HOME/.local/bin`はパスの通っている任意のディレクトリに読み替えてください。
