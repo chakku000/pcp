@@ -30,10 +30,9 @@ jobs:
             target: ${{ matrix.platform.target }}
             args: "--locked --release"
             strip: true
-            working-directory: rust
         - name: Compress Binary
           run: |
-            cd rust/target/${{matrix.platform.target}}/release
+            cd target/${{matrix.platform.target}}/release
             tar -czf pcp-${{matrix.platform.target}}.tar.gz pcp
             mv pcp-${{matrix.platform.target}}.tar.gz $GITHUB_WORKSPACE/
         - name: gh command
