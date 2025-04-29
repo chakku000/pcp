@@ -1,0 +1,43 @@
+name: Build and Upload to Github Release
+
+on:
+    release:
+        types: [created]
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        name: build - ${{ matrix.platform.os-name }}
+        strategy:
+            matrix:
+                # targetは `rustc --print target-list`で出力できる
+                platform:
+                    - os-name: Linux-x86_64
+                      runs-on: ubuntu-latest
+                      target: x86_64-unknown-linux-gnu
+                    - os-name: macOS
+                      runs-on: macOS-latest
+                      target: aarch64-apple-darwin
+        runs-on: ${{matrix.platform.runs-on}}
+        steps:
+        - uses: actions/checkout@v4
+        - name: Build Binary
+          uses: houseabsolute/actions-rust-cross@v1
+          with:
+            command: build
+            target: ${{ matrix.platform.target }}
+            args: "--locked --release"
+            strip: true
+            working-directory: rust
+        - name: Compress Binary
+          run: |
+            cd rust/target/${{matrix.platform.target}}/release
+            tar -czf pcp-${{matrix.platform.target}}.tar.gz pcp
+            mv pcp-${{matrix.platform.target}}.tar.gz $GITHUB_WORKSPACE/
+        - name: gh command
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            gh release upload "$GITHUB_REF_NAME" pcp-${{matrix.platform.target}}.tar.gz --clobber
